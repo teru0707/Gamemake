@@ -11,7 +11,7 @@ BG_COLOR = (0, 128, 0)  # サッカー場の緑色
 
 # プレイヤーとボールの設定
 PLAYER_SIZE = (100, 100)
-BALL_SIZE = (30, 30)
+BALL_SIZE = (45, 45)
 PLAYER_SPEED = 6.5
 BALL_SPEED = 5
 
@@ -40,6 +40,7 @@ pygame.display.set_caption("サッカーゲーム")
 
 # フォントの設定
 font = pygame.font.Font(None, 74)
+win_font = pygame.font.Font(None, 100) 
 
 # スコア、ボール、プレイヤーの初期化
 def reset_game():
@@ -89,6 +90,14 @@ def increae_speed_on_wall_collicion():
     else:
         ball_dy -= 0.1
 
+# 勝者を表示する関数
+def display_winner(winner):
+    win_text = win_font.render(f"{winner} win!!", True, (255, 0, 0))
+    screen.fill(BG_COLOR)  # 背景をクリア
+    screen.blit(win_text, (SCREEN_WIDTH // 2 - win_text.get_width() // 2, SCREEN_HEIGHT // 2 - win_text.get_height() // 2))
+    pygame.display.flip()  # 画面更新
+    pygame.time.wait(5000)  # 3秒待機
+
 
 # メインループ
 clock = pygame.time.Clock()
@@ -125,9 +134,15 @@ while running:
     # ゴール判定
     if ball.colliderect(goal1):  # 左ゴールに入った
         score2 += 1
+        if score2 == 5:
+            display_winner("player2")
+            running = False
         reset_ball()
     elif ball.colliderect(goal2):  # 右ゴールに入った
         score1 += 1
+        if score1 == 5:
+            display_winner("player1")
+            running = False
         reset_ball()
     elif ball.left <= 0 or ball.right >= SCREEN_WIDTH:  # ゴール外に出た場合
         reset_ball()
